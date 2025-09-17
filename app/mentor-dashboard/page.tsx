@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Calendar, Users, FileText, Clock, CheckCircle, AlertCircle, Star, MessageSquare, Video } from "lucide-react"
+import { Calendar, Users, FileText, Clock, CheckCircle, AlertCircle, Star, MessageSquare, Video, TrendingUp, University } from "lucide-react"
 
 const mockAppointments = [
   {
@@ -69,6 +69,45 @@ const mockStudentReports = [
     recommendations: 4,
     nextAction: "Parent consultation",
   },
+]
+
+const mockStudents = [
+  {
+    id: "s1",
+    name: "Arjun Patel",
+    email: "arjun.patel@example.com",
+    nextSession: "Today, 10:00 AM",
+    topCareer: "Data Scientist",
+    readiness: 82,
+  },
+  {
+    id: "s2",
+    name: "Sneha Reddy",
+    email: "sneha.reddy@example.com",
+    nextSession: "Tomorrow, 2:00 PM",
+    topCareer: "UI/UX Designer",
+    readiness: 74,
+  },
+  {
+    id: "s3",
+    name: "Karan Singh",
+    email: "karan.singh@example.com",
+    nextSession: "Jan 15, 4:00 PM",
+    topCareer: "Mechanical Engineer",
+    readiness: 88,
+  },
+]
+
+const mockTrends = [
+  { id: "t1", topic: "GenAI Engineering", change: "+12%", summary: "Hiring up across product and ops." },
+  { id: "t2", topic: "Cybersecurity", change: "+9%", summary: "Cloud security and GRC demand rising." },
+  { id: "t3", topic: "Data Analytics", change: "+7%", summary: "BI with Python/SQL remains core." },
+]
+
+const mockColleges = [
+  { id: "c1", name: "IIT Bombay", highlight: "Top for CS & AI", link: "#" },
+  { id: "c2", name: "IISc Bangalore", highlight: "Strong research pathways", link: "#" },
+  { id: "c3", name: "MIT-WPU", highlight: "Industry-aligned programs", link: "#" },
 ]
 
 const mentorStats = {
@@ -163,11 +202,13 @@ export default function MentorDashboardPage() {
 
         {/* Main Content */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="appointments">Appointments</TabsTrigger>
             <TabsTrigger value="reports">AI Reports</TabsTrigger>
             <TabsTrigger value="schedule">Schedule</TabsTrigger>
+            <TabsTrigger value="students">Students</TabsTrigger>
+            <TabsTrigger value="insights">Insights</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
@@ -353,6 +394,96 @@ export default function MentorDashboardPage() {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Students */}
+          <TabsContent value="students" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Students</CardTitle>
+              <CardDescription>View upcoming sessions and career readiness</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {mockStudents.map((s) => (
+                  <div key={s.id} className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 border rounded-lg">
+                    <div>
+                      <p className="font-medium">{s.name}</p>
+                      <p className="text-xs text-gray-600">{s.email}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-600 text-sm">Next session</span>
+                      <p className="font-medium">{s.nextSession}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-600 text-sm">Top career</span>
+                      <p className="font-medium">{s.topCareer}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-600 text-sm">Readiness</span>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-28 h-2 bg-gray-200 rounded-full overflow-hidden">
+                          <div className="h-full bg-green-500" style={{ width: `${s.readiness}%` }} />
+                        </div>
+                        <span className="text-sm font-medium">{s.readiness}%</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+          </TabsContent>
+
+          {/* Insights: Trends & Colleges */}
+          <TabsContent value="insights" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <TrendingUp className="h-5 w-5" />
+                  <span>Recent Tech Trends</span>
+                </CardTitle>
+                <CardDescription>Signals to inform guidance and session topics</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {mockTrends.map((t) => (
+                    <div key={t.id} className="flex items-start justify-between p-3 border rounded-lg">
+                      <div>
+                        <p className="font-medium text-sm">{t.topic}</p>
+                        <p className="text-xs text-gray-600">{t.summary}</p>
+                      </div>
+                      <span className="text-xs font-semibold text-green-700">{t.change}</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <University className="h-5 w-5" />
+                  <span>Colleges to Watch</span>
+                </CardTitle>
+                <CardDescription>Programs aligned with current market needs</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {mockColleges.map((c) => (
+                    <div key={c.id} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div>
+                        <p className="font-medium text-sm">{c.name}</p>
+                        <p className="text-xs text-gray-600">{c.highlight}</p>
+                      </div>
+                      <Button size="sm" variant="outline">Visit</Button>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
           </TabsContent>
         </Tabs>
       </div>
