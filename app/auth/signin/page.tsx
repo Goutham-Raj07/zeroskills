@@ -44,7 +44,7 @@ export default function SignInPage() {
       localStorage.setItem("refreshToken", data.refresh)
       document.cookie = `role=${role}; path=/; max-age=${60 * 60 * 24 * 7}`
 
-      if (role === "student") router.push("/")
+      if (role === "student") router.push("/assessment")
       else if (role === "mentor") router.push("/mentor-dashboard")
       else router.push("/alumni")
     } catch (error: any) {

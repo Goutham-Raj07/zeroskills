@@ -10,13 +10,8 @@ export function middleware(request: NextRequest) {
   // If mentor tries to access student-facing routes, redirect to dashboard
   const studentAreas = [
     "/assessment",
-    "/recommendations",
-    "/trial-courses",
     "/student-reports",
-    "/alumni",
-    "/parent-dashboard",
-    "/counselor",
-    "/alumni",
+    "/recommendations",
   ]
 
   if (role === "mentor") {
@@ -49,8 +44,7 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/",
-    "/(assessment|recommendations|trial-courses|student-reports|alumni|parent-dashboard|counselor|mentor-dashboard|auth/:path*)",
+    "/(assessment|student-reports|mentor-dashboard|auth/:path*)",
   ],
 }
 

@@ -53,7 +53,7 @@ export default function SignUpPage() {
       localStorage.setItem("accessToken", data.access)
       localStorage.setItem("refreshToken", data.refresh)
       document.cookie = `role=${backendRole}; path=/; max-age=${60 * 60 * 24 * 7}`
-      if (backendRole === "student") router.push("/")
+      if (backendRole === "student") router.push("/assessment")
       else if (backendRole === "mentor") router.push("/mentor-dashboard")
       else router.push("/alumni")
     } finally {
