@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { virtualLabApi } from "@/lib/api"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -32,6 +33,13 @@ export function VirtualLab({ labId, title, description, type, duration, difficul
   const [isRunning, setIsRunning] = useState(false)
   const [progress, setProgress] = useState(0)
   const [isCompleted, setIsCompleted] = useState(false)
+  const [code, setCode] = useState("")
+  const [output, setOutput] = useState("")
+  const [errors, setErrors] = useState("")
+  const [testResults, setTestResults] = useState<any[]>([])
+  const [score, setScore] = useState(0)
+  const [hints, setHints] = useState<string[]>([])
+  const [isExecuting, setIsExecuting] = useState(false)
 
   const getLabIcon = () => {
     switch (type) {
@@ -72,20 +80,54 @@ export function VirtualLab({ labId, title, description, type, duration, difficul
     }
   }
 
-  const handleStart = () => {
+  const handleStart = async () => {
     setIsRunning(true)
-    // Simulate lab progress
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          setIsRunning(false)
-          setIsCompleted(true)
-          clearInterval(interval)
-          return 100
-        }
-        return prev + 10
-      })
-    }, 1000)
+    try {
+      // Start lab session
+      await virtualLabApi.startLabSession(labId)
+      
+      // Simulate lab progress
+      const interval = setInterval(() => {
+        setProgress((prev) => {
+          if (prev >= 100) {
+            setIsRunning(false)
+            setIsCompleted(true)
+            clearInterval(interval)
+            return 100
+          }
+          return prev + 10
+        })
+      }, 1000)
+    } catch (error) {
+      console.error('Failed to start lab session:', error)
+      setIsRunning(false)
+    }
+  }
+
+  const handleExecuteCode = async () => {
+    if (!code.trim()) return
+    
+    setIsExecuting(true)
+    try {
+      const result = await virtualLabApi.executeCode(code, 1) // Using exercise ID 1 for demo
+      
+      setOutput(result.output)
+      setErrors(result.errors)
+      setTestResults(result.test_results)
+      setScore(result.score)
+      setHints(result.hints)
+      
+      if (result.success && result.score >= 80) {
+        setProgress(100)
+        setIsCompleted(true)
+        setIsRunning(false)
+      }
+    } catch (error) {
+      console.error('Code execution failed:', error)
+      setErrors('Failed to execute code. Please try again.')
+    } finally {
+      setIsExecuting(false)
+    }
   }
 
   const handleReset = () => {
@@ -141,15 +183,105 @@ export function VirtualLab({ labId, title, description, type, duration, difficul
           </div>
 
           {type === "coding" && (
-            <div className="space-y-2 font-mono text-sm">
-              <div className="text-gray-400"># Python Programming Lab</div>
-              <div className="text-blue-400">def calculate_fibonacci(n):</div>
-              <div className="text-white ml-4">if n &lt;= 1:</div>
-              <div className="text-white ml-8">return n</div>
-              <div className="text-white ml-4">return calculate_fibonacci(n-1) + calculate_fibonacci(n-2)</div>
-              <div className="text-gray-400"># Test your implementation</div>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="text-green-400 text-xs font-mono">Python Environment</div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-xs text-green-400">Ready</span>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <div className="text-gray-400 text-sm"># Write your Python code here</div>
+                <textarea
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  placeholder="# Example: print('Hello, World!')"
+                  className="w-full h-32 bg-gray-800 text-white p-3 rounded font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                
+                <div className="flex items-center space-x-2">
+                  <Button
+                    onClick={handleExecuteCode}
+                    disabled={!code.trim() || isExecuting}
+                    size="sm"
+                    className="bg-green-600 hover:bg-green-700"
+                  >
+                    {isExecuting ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                        Executing...
+                      </>
+                    ) : (
+                      <>
+                        <Play className="h-4 w-4 mr-2" />
+                        Run Code
+                      </>
+                    )}
+                  </Button>
+                  
+                  <Button
+                    onClick={() => setCode("")}
+                    variant="outline"
+                    size="sm"
+                  >
+                    Clear
+                  </Button>
+                </div>
+              </div>
+
+              {(output || errors) && (
+                <div className="space-y-2">
+                  <div className="text-gray-400 text-sm">Output:</div>
+                  <div className="bg-gray-800 p-3 rounded font-mono text-sm">
+                    {output && (
+                      <div className="text-green-400 whitespace-pre-wrap">{output}</div>
+                    )}
+                    {errors && (
+                      <div className="text-red-400 whitespace-pre-wrap">{errors}</div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {testResults.length > 0 && (
+                <div className="space-y-2">
+                  <div className="text-gray-400 text-sm">Test Results:</div>
+                  <div className="space-y-1">
+                    {testResults.map((test, index) => (
+                      <div key={index} className="flex items-center space-x-2 text-sm">
+                        <div className={`w-2 h-2 rounded-full ${test.passed ? 'bg-green-500' : 'bg-red-500'}`} />
+                        <span className="text-gray-300">Test {test.test_case}: {test.passed ? 'PASSED' : 'FAILED'}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="text-sm">
+                    <span className="text-gray-400">Score: </span>
+                    <span className={`font-bold ${score >= 80 ? 'text-green-400' : score >= 50 ? 'text-yellow-400' : 'text-red-400'}`}>
+                      {score.toFixed(1)}%
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {hints.length > 0 && (
+                <div className="space-y-2">
+                  <div className="text-gray-400 text-sm">Hints:</div>
+                  <div className="bg-yellow-900/20 border border-yellow-500/30 p-3 rounded">
+                    <ul className="space-y-1 text-sm text-yellow-200">
+                      {hints.map((hint, index) => (
+                        <li key={index}>• {hint}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              )}
+
               {isRunning && (
-                <div className="text-green-400 animate-pulse">&gt; Running tests... {progress}% complete</div>
+                <div className="text-green-400 animate-pulse text-sm">
+                  &gt; Running tests... {progress}% complete
+                </div>
               )}
             </div>
           )}

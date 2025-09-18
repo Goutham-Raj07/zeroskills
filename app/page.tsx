@@ -17,16 +17,19 @@ export default function HomePage() {
             <span className="text-xl font-bold text-primary">CareerPath AI</span>
           </div>
           <div className="hidden md:flex items-center space-x-6">
-            <Link href="#assessments" className="text-sm font-medium hover:text-primary transition-colors">
+            <Link href="/assessment" className="text-sm font-medium hover:text-primary transition-colors">
               Assessments
             </Link>
-            <Link href="#recommendations" className="text-sm font-medium hover:text-primary transition-colors">
+            <Link href="/recommendations" className="text-sm font-medium hover:text-primary transition-colors">
               Recommendations
             </Link>
-            <Link href="#resources" className="text-sm font-medium hover:text-primary transition-colors">
-              Resources
+            <Link href="/trial-courses" className="text-sm font-medium hover:text-primary transition-colors">
+              Trial Courses
             </Link>
-            <Link href="#alumni" className="text-sm font-medium hover:text-primary transition-colors">
+            <Link href="/virtual-labs" className="text-sm font-medium hover:text-primary transition-colors">
+              Virtual Labs
+            </Link>
+            <Link href="/alumni" className="text-sm font-medium hover:text-primary transition-colors">
               Alumni Network
             </Link>
           </div>
@@ -258,8 +261,13 @@ export default function HomePage() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="#" className="hover:text-foreground transition-colors">
+                  <Link href="/trial-courses" className="hover:text-foreground transition-colors">
                     Trial Courses
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/virtual-labs" className="hover:text-foreground transition-colors">
+                    Virtual Labs
                   </Link>
                 </li>
                 <li>

@@ -162,6 +162,12 @@ export default function TrialCoursesPage() {
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Experience courses before you commit. Try hands-on labs, complete projects, and discover your passion.
           </p>
+          <div className="flex items-center justify-center space-x-4">
+            <Button variant="outline" onClick={() => window.location.href = '/virtual-labs'}>
+              <Microscope className="h-4 w-4 mr-2" />
+              Explore Virtual Labs
+            </Button>
+          </div>
         </div>
 
         {/* Stats */}
