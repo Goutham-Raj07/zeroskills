@@ -77,7 +77,7 @@ export function RecommendationCard({ career }: RecommendationCardProps) {
         <div>
           <h4 className="font-medium mb-2">Key Skills Required</h4>
           <div className="flex flex-wrap gap-2">
-            {career.skills.map((skill, index) => (
+            {(career.skills || []).map((skill, index) => (
               <Badge key={index} variant="outline">
                 {skill}
               </Badge>
@@ -128,7 +128,7 @@ export function RecommendationCard({ career }: RecommendationCardProps) {
         <div>
           <h4 className="font-medium mb-2">Top Hiring Companies</h4>
           <div className="flex flex-wrap gap-2">
-            {career.topCompanies.map((company, index) => (
+            {(career.topCompanies || []).map((company, index) => (
               <Badge key={index} variant="secondary" className="bg-blue-50 text-blue-700">
                 <Building2 className="mr-1 h-3 w-3" />
                 {company}
@@ -168,7 +168,9 @@ export function RecommendationCard({ career }: RecommendationCardProps) {
                     <Badge variant="outline" className="text-xs">
                       {step}
                     </Badge>
-                    {index < career.careerPath.length - 1 && <ArrowRight className="h-3 w-3 text-muted-foreground" />}
+                    {index < ((career.careerPath && career.careerPath.length) ? career.careerPath.length - 1 : 0) && (
+                      <ArrowRight className="h-3 w-3 text-muted-foreground" />
+                    )}
                   </div>
                 ))}
               </div>

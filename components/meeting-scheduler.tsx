@@ -59,7 +59,13 @@ const mockMeetings = [
   },
 ]
 
-export function MeetingScheduler() {
+interface MeetingSchedulerProps {
+  mentorName?: string
+  careerField?: string
+  onClose?: () => void
+}
+
+export function MeetingScheduler({ mentorName, careerField, onClose }: MeetingSchedulerProps = {}) {
   const [selectedTab, setSelectedTab] = useState<"upcoming" | "past">("upcoming")
 
   const upcomingMeetings = mockMeetings.filter((m) => m.status === "confirmed" || m.status === "pending")

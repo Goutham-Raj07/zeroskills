@@ -1,7 +1,11 @@
+"use client"
+
+import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Calendar, Clock, BookOpen, GraduationCap, AlertCircle } from "lucide-react"
+import { PreparationGuideModal } from "@/components/preparation-guide-modal"
 
 interface Exam {
   id: string
@@ -15,6 +19,7 @@ interface Exam {
   subjects: string[]
   pattern: string
   duration: string
+  prepUrl?: string
 }
 
 interface ExamCardProps {
@@ -22,6 +27,8 @@ interface ExamCardProps {
 }
 
 export function ExamCard({ exam }: ExamCardProps) {
+  const [isGuideOpen, setIsGuideOpen] = useState(false)
+
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty.toLowerCase()) {
       case "very high":
@@ -35,7 +42,17 @@ export function ExamCard({ exam }: ExamCardProps) {
     }
   }
 
+  const openGoogleCalendar = () => {
+    const title = encodeURIComponent(`Reminder: ${exam.name}`)
+    const details = encodeURIComponent(
+      exam.prepUrl ? `Preparation guide: ${exam.prepUrl}` : "Prepare for the exam"
+    )
+    const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}`
+    window.open(url, "_blank", "noopener,noreferrer")
+  }
+
   return (
+    <>
     <Card className="relative overflow-hidden">
       <CardHeader>
         <div className="flex items-start justify-between">
@@ -57,7 +74,7 @@ export function ExamCard({ exam }: ExamCardProps) {
             <Calendar className="h-4 w-4 text-blue-600" />
             <div>
               <p className="text-sm font-medium">Exam Date</p>
-              <p className="text-sm text-muted-foreground">{exam.examDate}</p>
+              <p className="text-sm text-foreground">{exam.examDate}</p>
             </div>
           </div>
 
@@ -65,7 +82,7 @@ export function ExamCard({ exam }: ExamCardProps) {
             <AlertCircle className="h-4 w-4 text-red-600" />
             <div>
               <p className="text-sm font-medium">Application Deadline</p>
-              <p className="text-sm text-muted-foreground">{exam.applicationDeadline}</p>
+              <p className="text-sm text-foreground">{exam.applicationDeadline}</p>
             </div>
           </div>
 
@@ -113,10 +130,20 @@ export function ExamCard({ exam }: ExamCardProps) {
 
         {/* Actions */}
         <div className="flex items-center space-x-2 pt-4 border-t">
-          <Button className="flex-1">Preparation Guide</Button>
-          <Button variant="outline">Set Reminder</Button>
+          <Button className="flex-1" onClick={() => setIsGuideOpen(true)}>
+            Preparation Guide
+          </Button>
+          <Button variant="outline" onClick={openGoogleCalendar}>Set Reminder</Button>
         </div>
       </CardContent>
     </Card>
+    
+    <PreparationGuideModal
+      examId={exam.id}
+      examName={exam.name}
+      isOpen={isGuideOpen}
+      onClose={() => setIsGuideOpen(false)}
+    />
+    </>
   )
 }

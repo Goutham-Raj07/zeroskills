@@ -3,8 +3,40 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { ArrowRight, BookOpen, Brain, Users, Award, Target, CheckCircle } from "lucide-react"
 import Link from "next/link"
+import { ExamCard } from "@/components/exam-card"
+import { CourseCareerMapping } from "@/components/course-career-mapping"
 
 export default function HomePage() {
+  const importantExams = [
+    {
+      id: "nda",
+      name: "National Defence Academy (NDA)",
+      type: "Defence",
+      eligibility: "12th pass (age as per rules)",
+      examDate: "NDA I: Apr | NDA II: Sep",
+      applicationDeadline: "As per UPSC calendar",
+      difficulty: "High",
+      colleges: ["NDA", "Naval Academy"],
+      subjects: ["Mathematics", "GAT"],
+      pattern: "Written, SSB, Medicals",
+      duration: "Math 150m; GAT 150m",
+      prepUrl: "https://www.upsc.gov.in/examinations/NDA-CDS",
+    },
+    {
+      id: "afcat",
+      name: "AFCAT",
+      type: "Defence",
+      eligibility: "Graduates (varies by branch)",
+      examDate: "AFCAT I: Feb | AFCAT II: Aug",
+      applicationDeadline: "As per IAF notification",
+      difficulty: "Medium",
+      colleges: ["Indian Air Force"],
+      subjects: ["English", "GA", "Reasoning", "Math"],
+      pattern: "CBT + SSB (as applicable)",
+      duration: "~120 min",
+      prepUrl: "https://afcat.cdac.in/AFCAT/",
+    },
+  ]
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
@@ -182,6 +214,11 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Course-to-Career Path Mapping Section */}
+      <section className="py-20 bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <CourseCareerMapping />
+      </section>
+
       {/* Stats Section */}
       <section className="py-20">
         <div className="container">
@@ -283,7 +320,7 @@ export default function HomePage() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="#" className="hover:text-foreground transition-colors">
+                  <Link href="/important-exams" className="hover:text-foreground transition-colors">
                     Entrance Exams
                   </Link>
                 </li>
